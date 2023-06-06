@@ -21,8 +21,11 @@ public class GameDocument {
 
     public int turn = 0;
 
+    public String winner;
+
     public void play(String name, int column) {
         if (turn == 0) throw new InvalidParameterException("We cant play");
+        if (winner != null) throw new InvalidParameterException("We cant play");
         if (turn == 1 && !name.equals(user1)) throw new InvalidParameterException("Not your turn");
         if (turn == 2 && !name.equals(user2)) throw new InvalidParameterException("Not your turn");
 
@@ -45,10 +48,77 @@ public class GameDocument {
             }
         }
 
+        checkWinner(name);
+
         if (name.equals(user1)) {
             turn = 2;
         } else {
             turn = 1;
         }
+    }
+
+    private void checkWinner(String name) {
+        if (name.equals(user1)) {
+            turn = 2;
+        } else {
+            turn = 1;
+        }
+
+        for (int i = 0; i < MAX_ROWS; i++) {
+            for (int j = 0; j < MAX_COLS; j++) {
+                if (checkRight(turn, i, j) || checkDownRight(turn, i, j) || checkUpRight(turn, i, j)) {
+                    this.winner = name;
+                }
+            }
+        }
+    }
+
+    private boolean checkRight(int turn, int row, int col) {
+        if (col > MAX_ROWS - 4) {
+            return false;
+        }
+
+        for (int j = col; j < col + 4; j++) {
+            if (board[row][j] != turn)
+                return false;
+        }
+
+        return true;
+    }
+
+    private boolean checkUpRight(int turn, int row, int col) {
+        if (row < 4) {
+            return false;
+        }
+        if (col > MAX_ROWS - 4) {
+            return false;
+        }
+
+        for (int i = row; i < row - 4; i--) {
+            for (int j = col; j < col + 4; j++) {
+                if (board[i][j] != turn)
+                    return false;
+            }
+        }
+
+        return true;
+    }
+
+    private boolean checkDownRight(int turn, int row, int col) {
+        if (row > MAX_ROWS - 4) {
+            return false;
+        }
+        if (col > MAX_ROWS - 4) {
+            return false;
+        }
+
+        for (int i = row; i < row + 4; i++) {
+            for (int j = col; j < col + 4; j++) {
+                if (board[i][j] != turn)
+                    return false;
+            }
+        }
+
+        return true;
     }
 }
