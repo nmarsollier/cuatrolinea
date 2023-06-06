@@ -1,6 +1,7 @@
 package com.desarrollo.cuatrolinea.security;
 
 import com.desarrollo.cuatrolinea.security.model.*;
+import com.desarrollo.cuatrolinea.security.pojo.ChangePasswordData;
 import com.desarrollo.cuatrolinea.security.pojo.RegisterData;
 import com.desarrollo.cuatrolinea.security.pojo.Token;
 import com.desarrollo.cuatrolinea.security.pojo.User;
@@ -16,7 +17,7 @@ import java.util.Objects;
 
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/users")
+@RequestMapping(value = "/user")
 public class AuthModel {
     @Autowired
     UserRepository userRepository;
@@ -30,6 +31,13 @@ public class AuthModel {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public Token register(@RequestBody RegisterData registerData) {
+        if (registerData.userName.isBlank()) {
+            throw new HttpClientErrorException(HttpStatusCode.valueOf(404), "Invalid username");
+        }
+        if (registerData.password.isBlank()) {
+            throw new HttpClientErrorException(HttpStatusCode.valueOf(404), "Invalid password");
+        }
+
         UserDocument user = userRepository.save(new UserDocument(
                 registerData.userName,
                 ShaEncoder.encode(registerData.password)
@@ -71,6 +79,28 @@ public class AuthModel {
         Token result = new Token();
         result.token = token.id;
         return result;
+    }
+
+    public @PostMapping(
+            value = "/changePassword",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    void changePassword(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String auth,
+            @RequestBody ChangePasswordData changePasswordData
+    ) {
+        UserDocument user = AuthValidation.validateAuthUser(userRepository, tokenRepository, auth);
+
+        if (!ShaEncoder.encode(changePasswordData.currentPassword).equals(user.password)) {
+            throw new HttpClientErrorException(HttpStatusCode.valueOf(404), "Invalid password");
+        }
+
+        if (changePasswordData.newPassword.isBlank()) {
+            throw new HttpClientErrorException(HttpStatusCode.valueOf(404), "Invalid password");
+        }
+
+        user.password = ShaEncoder.encode(changePasswordData.newPassword);
+        userRepository.save(user);
     }
 
     public @GetMapping(

@@ -12,15 +12,24 @@ public class ProfileDocument {
 
     public String name;
 
-    public String birthDate;
+    public String email;
+
+    public String address;
+
+    public String provinceId;
 
     public String picture;
 
-    public ProfileDocument(String userId, String name, String birthDate, String picture) {
+    public String phone;
+
+    public ProfileDocument(String userId, String name, String email, String picture, String provinceId, String address, String phone) {
         super();
         this.userId = userId;
         this.name = name;
-        this.birthDate = birthDate;
+        this.email = email;
+        this.provinceId = provinceId;
+        this.address = address;
         this.picture = picture;
+        this.phone = phone;
     }
 }
