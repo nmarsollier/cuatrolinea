@@ -6,6 +6,8 @@ import com.desarrollo.cuatrolinea.security.pojo.RegisterData;
 import com.desarrollo.cuatrolinea.security.pojo.Token;
 import com.desarrollo.cuatrolinea.security.pojo.User;
 import com.desarrollo.cuatrolinea.utilities.ShaEncoder;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
@@ -25,6 +27,7 @@ public class AuthModel {
     @Autowired
     TokenRepository tokenRepository;
 
+    @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     @PostMapping(
             value = "/register",
             consumes = {MediaType.APPLICATION_JSON_VALUE},

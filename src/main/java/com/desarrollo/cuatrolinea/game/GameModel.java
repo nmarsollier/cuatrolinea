@@ -7,8 +7,6 @@ import com.desarrollo.cuatrolinea.security.AuthValidation;
 import com.desarrollo.cuatrolinea.security.model.TokenRepository;
 import com.desarrollo.cuatrolinea.security.model.UserDocument;
 import com.desarrollo.cuatrolinea.security.model.UserRepository;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
@@ -17,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 
 @CrossOrigin
-@Api(value = "Juego Cuatro en Linea", description = "REST APIs relacionadas con el juego")
 @RestController
 @RequestMapping(value = "/game")
 public class GameModel {
@@ -30,7 +27,6 @@ public class GameModel {
     @Autowired
     GameRepository gameRepository;
 
-    @ApiOperation(value = "Crear un nuevo juego", response = GameBoard.class, tags = "game")
     @PostMapping(
             value = "/new",
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -54,7 +50,6 @@ public class GameModel {
         return new GameBoard(game);
     }
 
-    @ApiOperation(value = "Ontener el detalle del juego actual", response = GameBoard.class, tags = "game")
     @GetMapping(
             value = "/{id}/board",
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -69,7 +64,6 @@ public class GameModel {
         return new GameBoard(existingGame);
     }
 
-    @ApiOperation(value = "Hacer una juagada jueva", response = GameBoard.class, tags = "game")
     @PostMapping(
             value = "/{id}/play",
             produces = MediaType.APPLICATION_JSON_VALUE
