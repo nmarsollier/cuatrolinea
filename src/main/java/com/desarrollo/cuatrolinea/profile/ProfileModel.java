@@ -10,6 +10,7 @@ import com.desarrollo.cuatrolinea.security.AuthValidation;
 import com.desarrollo.cuatrolinea.security.model.TokenRepository;
 import com.desarrollo.cuatrolinea.security.model.UserDocument;
 import com.desarrollo.cuatrolinea.security.model.UserRepository;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -31,6 +32,7 @@ public class ProfileModel {
     @Autowired
     ProvinceRepository provinceRepository;
 
+    @Tag(name = "Profile", description = "Update current user profile")
     @PostMapping(
             value = "/update",
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -67,6 +69,7 @@ public class ProfileModel {
         return new Profile(user, profile);
     }
 
+    @Tag(name = "Profile", description = "Get current user profile")
     @GetMapping(
             value = "/current",
             produces = MediaType.APPLICATION_JSON_VALUE

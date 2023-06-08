@@ -6,8 +6,9 @@ import com.desarrollo.cuatrolinea.security.pojo.RegisterData;
 import com.desarrollo.cuatrolinea.security.pojo.Token;
 import com.desarrollo.cuatrolinea.security.pojo.User;
 import com.desarrollo.cuatrolinea.utilities.ShaEncoder;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.headers.Header;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
@@ -27,7 +28,8 @@ public class AuthModel {
     @Autowired
     TokenRepository tokenRepository;
 
-    @Operation(security = { @SecurityRequirement(name = "bearer-key") })
+    @Tag(name = "User",
+            description = "Register a new user in the paltform")
     @PostMapping(
             value = "/register",
             consumes = {MediaType.APPLICATION_JSON_VALUE},
@@ -55,6 +57,8 @@ public class AuthModel {
         return result;
     }
 
+    @Tag(name = "User",
+            description = "Get info about current user")
     @GetMapping(
             value = "/current",
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -65,6 +69,7 @@ public class AuthModel {
         return new User(user);
     }
 
+    @Tag(name = "User", description = "Login in the app")
     public @PostMapping(
             value = "/login",
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -84,6 +89,7 @@ public class AuthModel {
         return result;
     }
 
+    @Tag(name = "User", description = "Change current user password")
     public @PostMapping(
             value = "/changePassword",
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -106,6 +112,7 @@ public class AuthModel {
         userRepository.save(user);
     }
 
+    @Tag(name = "User", description = "Logout current user")
     public @GetMapping(
             value = "/logout",
             produces = MediaType.APPLICATION_JSON_VALUE

@@ -7,6 +7,7 @@ import com.desarrollo.cuatrolinea.security.AuthValidation;
 import com.desarrollo.cuatrolinea.security.model.TokenRepository;
 import com.desarrollo.cuatrolinea.security.model.UserDocument;
 import com.desarrollo.cuatrolinea.security.model.UserRepository;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
@@ -27,6 +28,7 @@ public class GameModel {
     @Autowired
     GameRepository gameRepository;
 
+    @Tag(name = "Game", description = "Play new game")
     @PostMapping(
             value = "/new",
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -50,6 +52,7 @@ public class GameModel {
         return new GameBoard(game);
     }
 
+    @Tag(name = "Game", description = "Gets the current board")
     @GetMapping(
             value = "/{id}/board",
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -64,6 +67,7 @@ public class GameModel {
         return new GameBoard(existingGame);
     }
 
+    @Tag(name = "Game", description = "Make a play")
     @PostMapping(
             value = "/{id}/play",
             produces = MediaType.APPLICATION_JSON_VALUE

@@ -1,19 +1,13 @@
 package com.desarrollo.cuatrolinea.provinces;
 
-import com.desarrollo.cuatrolinea.profile.model.ProfileDocument;
-import com.desarrollo.cuatrolinea.profile.model.ProfileRepository;
-import com.desarrollo.cuatrolinea.profile.pojo.Profile;
-import com.desarrollo.cuatrolinea.profile.pojo.ProfileData;
 import com.desarrollo.cuatrolinea.provinces.model.ProvinceDocument;
 import com.desarrollo.cuatrolinea.provinces.model.ProvinceRepository;
 import com.desarrollo.cuatrolinea.provinces.pojo.NewProvinceData;
 import com.desarrollo.cuatrolinea.provinces.pojo.Province;
 import com.desarrollo.cuatrolinea.security.AuthValidation;
 import com.desarrollo.cuatrolinea.security.model.TokenRepository;
-import com.desarrollo.cuatrolinea.security.model.UserDocument;
 import com.desarrollo.cuatrolinea.security.model.UserRepository;
-import com.desarrollo.cuatrolinea.security.pojo.ChangePasswordData;
-import com.desarrollo.cuatrolinea.security.pojo.User;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -34,6 +28,8 @@ public class ProvinceModel {
     @Autowired
     ProvinceRepository provinceRepository;
 
+
+    @Tag(name = "Provinces", description = "List all provinces")
     @GetMapping(
             value = "/list",
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -44,6 +40,7 @@ public class ProvinceModel {
         return provinceRepository.findAll().stream().map(Province::new).toList();
     }
 
+    @Tag(name = "Provinces", description = "Create new Province")
     @PostMapping(
             value = "/new",
             produces = MediaType.APPLICATION_JSON_VALUE
