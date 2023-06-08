@@ -1,9 +1,11 @@
 package com.desarrollo.cuatrolinea.profile.pojo;
 
 import com.desarrollo.cuatrolinea.profile.model.ProfileDocument;
+import com.desarrollo.cuatrolinea.security.model.UserDocument;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 public class Profile {
+    public String login;
 
     public String name;
 
@@ -18,7 +20,8 @@ public class Profile {
     public final String phone;
 
     @JsonCreator
-    public Profile(ProfileDocument profile) {
+    public Profile(UserDocument user, ProfileDocument profile) {
+        this.login =  user.name;
         this.name = profile.name;
         this.email = profile.email;
         this.provinceId = profile.provinceId;

@@ -7,6 +7,8 @@ import com.desarrollo.cuatrolinea.security.AuthValidation;
 import com.desarrollo.cuatrolinea.security.model.TokenRepository;
 import com.desarrollo.cuatrolinea.security.model.UserDocument;
 import com.desarrollo.cuatrolinea.security.model.UserRepository;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 
 @CrossOrigin
+@Api(value = "Juego Cuatro en Linea", description = "REST APIs relacionadas con el juego")
 @RestController
 @RequestMapping(value = "/game")
 public class GameModel {
@@ -27,6 +30,7 @@ public class GameModel {
     @Autowired
     GameRepository gameRepository;
 
+    @ApiOperation(value = "Crear un nuevo juego", response = GameBoard.class, tags = "game")
     @PostMapping(
             value = "/new",
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -36,7 +40,7 @@ public class GameModel {
     ) {
         UserDocument user = AuthValidation.validateAuthUser(userRepository, tokenRepository, auth);
 
-        GameDocument game = gameRepository.findItemFree(user.id).stream().findFirst().orElse(null);
+        GameDocument game = gameRepository.findItemFree(user.name).stream().findFirst().orElse(null);
         if (game != null) {
             game.user2 = user.name;
         } else {
@@ -47,10 +51,11 @@ public class GameModel {
 
         gameRepository.save(game);
 
-        return new GameBoard(game, userRepository);
+        return new GameBoard(game);
     }
 
-    @PostMapping(
+    @ApiOperation(value = "Ontener el detalle del juego actual", response = GameBoard.class, tags = "game")
+    @GetMapping(
             value = "/{id}/board",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
@@ -58,12 +63,13 @@ public class GameModel {
             @PathVariable("id") String id,
             @RequestHeader(HttpHeaders.AUTHORIZATION) String auth
     ) {
-        UserDocument user = AuthValidation.validateAuthUser(userRepository, tokenRepository, auth);
+        AuthValidation.validateAuthUser(userRepository, tokenRepository, auth);
 
         GameDocument existingGame = gameRepository.findById(id).orElseThrow();
-        return new GameBoard(existingGame, userRepository);
+        return new GameBoard(existingGame);
     }
 
+    @ApiOperation(value = "Hacer una juagada jueva", response = GameBoard.class, tags = "game")
     @PostMapping(
             value = "/{id}/play",
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -82,6 +88,6 @@ public class GameModel {
         game.play(user.name, column);
         game = gameRepository.save(game);
 
-        return new GameBoard(game, userRepository);
+        return new GameBoard(game);
     }
 }
