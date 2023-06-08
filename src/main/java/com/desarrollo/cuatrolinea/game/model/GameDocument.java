@@ -7,8 +7,8 @@ import java.security.InvalidParameterException;
 
 @Document("games")
 public class GameDocument {
-    static int MAX_COLS = 10;
-    static int MAX_ROWS = 10;
+    static int MAX_COLS = 5;
+    static int MAX_ROWS = 5;
 
     @Id
     public String id;
@@ -22,6 +22,8 @@ public class GameDocument {
     public int turn = 0;
 
     public String winner;
+
+    public boolean match = false;
 
     public void play(String name, int column) {
         if (turn == 0) throw new InvalidParameterException("We cant play");
@@ -58,67 +60,68 @@ public class GameDocument {
     }
 
     private void checkWinner(String name) {
-        if (name.equals(user1)) {
-            turn = 2;
-        } else {
-            turn = 1;
-        }
-
         for (int i = 0; i < MAX_ROWS; i++) {
             for (int j = 0; j < MAX_COLS; j++) {
-                if (checkRight(turn, i, j) || checkDownRight(turn, i, j) || checkUpRight(turn, i, j)) {
+                if (checkRight(turn, i, j) || checkDownRight(turn, i, j) || checkUpRight(turn, i, j) || checkDown(turn, i, j)) {
                     this.winner = name;
                 }
             }
         }
+        if(checkNoWins()) {
+            this.match = true;
+        }
+    }
+
+    private boolean checkDown(int turn, int row, int col) {
+        if (row > MAX_ROWS - 4) return false;
+
+        for (int i = 0; i < 4; i++) {
+            if (board[row + i][col] != turn) return false;
+        }
+
+        return true;
     }
 
     private boolean checkRight(int turn, int row, int col) {
-        if (col > MAX_ROWS - 4) {
-            return false;
-        }
+        if (col > MAX_ROWS - 4) return false;
 
-        for (int j = col; j < col + 4; j++) {
-            if (board[row][j] != turn)
-                return false;
+        for (int i = 0; i < 4; i++) {
+            if (board[row][col + i] != turn) return false;
         }
 
         return true;
     }
 
     private boolean checkUpRight(int turn, int row, int col) {
-        if (row < 4) {
-            return false;
-        }
-        if (col > MAX_ROWS - 4) {
-            return false;
-        }
+        if (row < 4) return false;
 
-        for (int i = row; i < row - 4; i--) {
-            for (int j = col; j < col + 4; j++) {
-                if (board[i][j] != turn)
-                    return false;
-            }
+        if (col > MAX_ROWS - 4) return false;
+
+        for (int i = 0; i < 4; i++) {
+            if (board[row - i][col + i] != turn) return false;
         }
 
         return true;
     }
 
     private boolean checkDownRight(int turn, int row, int col) {
-        if (row > MAX_ROWS - 4) {
-            return false;
-        }
-        if (col > MAX_ROWS - 4) {
-            return false;
+        if (row > MAX_ROWS - 4) return false;
+
+        if (col > MAX_ROWS - 4) return false;
+
+        for (int i = 0; i < 4; i++) {
+            if (board[row + i][col + i] != turn) return false;
         }
 
-        for (int i = row; i < row + 4; i++) {
-            for (int j = col; j < col + 4; j++) {
-                if (board[i][j] != turn)
-                    return false;
+        return true;
+    }
+
+    private boolean checkNoWins() {
+        for(int i = 0; i<MAX_ROWS; i++) {
+            for(int j=0; j<MAX_COLS; j++) {
+                if(board[i][j] == 0) return false;
             }
         }
-
         return true;
     }
 }

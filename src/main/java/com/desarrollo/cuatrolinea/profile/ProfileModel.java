@@ -64,7 +64,7 @@ public class ProfileModel {
 
         profileRepository.save(profile);
 
-        return new Profile(profile);
+        return new Profile(user, profile);
     }
 
     @GetMapping(
@@ -77,6 +77,6 @@ public class ProfileModel {
         if (profile == null) {
             profile = new ProfileDocument(user.id, user.name, null, null, null, null, null);
         }
-        return new Profile(profile);
+        return new Profile(user, profile);
     }
 }
