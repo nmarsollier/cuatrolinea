@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(
-        uniqueConstraints = @UniqueConstraint(columnNames = {"name" })
+        uniqueConstraints = @UniqueConstraint(columnNames = {"name"})
 )
 public class User {
     @Id

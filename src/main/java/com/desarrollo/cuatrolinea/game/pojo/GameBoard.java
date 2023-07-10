@@ -44,7 +44,7 @@ public class GameBoard {
             }
         }
         this.user1 = document.user1.name;
-        if (document.user2!= null) {
+        if (document.user2 != null) {
             this.user2 = document.user2.name;
         }
     }

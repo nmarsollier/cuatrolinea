@@ -38,11 +38,11 @@ public class ProfileModel {
             value = "/update",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public Profile update(
+    public ProfileDTO update(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String auth,
             @RequestBody ProfileData profileData
     ) {
-        UserDocument user = AuthValidation.validateAuthUser(userRepository, tokenRepository, auth);
+        User user = AuthValidation.validateAuthUser(tokenRepository, auth);
 
         Province province = null;
         if (profileData.provinceId != null) {
@@ -71,12 +71,9 @@ public class ProfileModel {
             value = "/current",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public Profile currentUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String auth) {
-        UserDocument user = AuthValidation.validateAuthUser(userRepository, tokenRepository, auth);
-        ProfileDocument profile = profileRepository.findItemByUserId(user.id);
-        if (profile == null) {
-            profile = new ProfileDocument(user.id, user.name, null, null, null, null, null);
-        }
-        return new Profile(user, profile);
+    public ProfileDTO currentUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String auth) {
+        User user = AuthValidation.validateAuthUser(tokenRepository, auth);
+        Profile profile = profileRepository.findItemByUser(user);
+        return new ProfileDTO(user, profile);
     }
 }

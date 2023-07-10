@@ -1,7 +1,6 @@
 package com.desarrollo.cuatrolinea.provinces;
 
 import com.desarrollo.cuatrolinea.provinces.model.Province;
-import com.desarrollo.cuatrolinea.provinces.model.ProvinceDocument;
 import com.desarrollo.cuatrolinea.provinces.model.ProvinceRepository;
 import com.desarrollo.cuatrolinea.provinces.pojo.NewProvinceData;
 import com.desarrollo.cuatrolinea.provinces.pojo.ProvinceDTO;

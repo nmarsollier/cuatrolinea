@@ -8,6 +8,8 @@ Backend en java para juego cuatro en linea
 
 Instalar la base de datos acorde a la documentacion.
 
+Crear el esquema 4_linea
+
 ## Configuracion
 
 Instalar InlettliJ Community
