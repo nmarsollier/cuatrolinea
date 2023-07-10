@@ -3,9 +3,10 @@ package com.desarrollo.cuatrolinea.security;
 import com.desarrollo.cuatrolinea.security.model.*;
 import com.desarrollo.cuatrolinea.security.pojo.ChangePasswordData;
 import com.desarrollo.cuatrolinea.security.pojo.RegisterData;
-import com.desarrollo.cuatrolinea.security.pojo.Token;
-import com.desarrollo.cuatrolinea.security.pojo.User;
+import com.desarrollo.cuatrolinea.security.pojo.TokenDTO;
+import com.desarrollo.cuatrolinea.security.pojo.UserDTO;
 import com.desarrollo.cuatrolinea.utilities.ShaEncoder;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
@@ -20,6 +21,9 @@ import java.util.Objects;
 @RequestMapping(value = "/user")
 public class AuthModel {
     @Autowired
+    AuthValidation validation;
+
+    @Autowired
     UserRepository userRepository;
 
     @Autowired
@@ -30,7 +34,7 @@ public class AuthModel {
             consumes = {MediaType.APPLICATION_JSON_VALUE},
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public Token register(@RequestBody RegisterData registerData) {
+    public TokenDTO register(@RequestBody RegisterData registerData) {
         if (registerData.userName.isBlank()) {
             throw new HttpClientErrorException(HttpStatusCode.valueOf(404), "Invalid username");
         }
@@ -38,16 +42,14 @@ public class AuthModel {
             throw new HttpClientErrorException(HttpStatusCode.valueOf(404), "Invalid password");
         }
 
-        UserDocument user = userRepository.save(new UserDocument(
+        User user = userRepository.save(new User(
                 registerData.userName,
                 ShaEncoder.encode(registerData.password)
         ));
 
-        TokenDocument token = tokenRepository.save(new TokenDocument(
-                user.name
-        ));
+        Token token = tokenRepository.save(new Token(user));
 
-        Token result = new Token();
+        TokenDTO result = new TokenDTO();
         result.token = token.id;
         return result;
     }
@@ -56,27 +58,25 @@ public class AuthModel {
             value = "/current",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public User currentUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String auth) {
-        UserDocument user = AuthValidation.validateAuthUser(userRepository, tokenRepository, auth);
+    public UserDTO currentUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String auth) {
+        User user = validation.validateAuthUser(tokenRepository, auth);
 
-        return new User(user);
+        return new UserDTO(user);
     }
 
     public @PostMapping(
             value = "/login",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    Token login(@RequestBody RegisterData registerData) {
-        UserDocument user = Objects.requireNonNull(userRepository.findItemByName(registerData.userName));
+    TokenDTO login(@RequestBody RegisterData registerData) {
+        User user = Objects.requireNonNull(userRepository.findItemByName(registerData.userName));
         if (!ShaEncoder.encode(registerData.password).equals(user.password)) {
             throw new HttpClientErrorException(HttpStatusCode.valueOf(404), "Invalid password");
         }
 
-        TokenDocument token = tokenRepository.save(new TokenDocument(
-                user.name
-        ));
+        Token token = tokenRepository.save(new Token(user));
 
-        Token result = new Token();
+        TokenDTO result = new TokenDTO();
         result.token = token.id;
         return result;
     }
@@ -89,7 +89,7 @@ public class AuthModel {
             @RequestHeader(HttpHeaders.AUTHORIZATION) String auth,
             @RequestBody ChangePasswordData changePasswordData
     ) {
-        UserDocument user = AuthValidation.validateAuthUser(userRepository, tokenRepository, auth);
+        User user = AuthValidation.validateAuthUser(tokenRepository, auth);
 
         if (!ShaEncoder.encode(changePasswordData.currentPassword).equals(user.password)) {
             throw new HttpClientErrorException(HttpStatusCode.valueOf(404), "Invalid password");
@@ -108,7 +108,7 @@ public class AuthModel {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     void logout(@RequestHeader(HttpHeaders.AUTHORIZATION) String auth) {
-        TokenDocument token = tokenRepository.findById(auth.substring(7)).orElseThrow();
+        Token token = tokenRepository.findById(auth.substring(7)).orElseThrow();
         token.status = RecordStatus.INACTIVE;
         tokenRepository.save(token);
     }

@@ -1,10 +1,8 @@
 package com.desarrollo.cuatrolinea.profile.model;
 
-import com.desarrollo.cuatrolinea.security.model.TokenDocument;
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.Query;
+import com.desarrollo.cuatrolinea.security.model.User;
+import org.springframework.data.repository.CrudRepository;
 
-public interface ProfileRepository extends MongoRepository<ProfileDocument, String> {
-    @Query("{userId:'?0'}")
-    ProfileDocument findItemByUserId(String userId);
+public interface ProfileRepository extends CrudRepository<Profile, String> {
+    Profile findItemByUser(User user);
 }

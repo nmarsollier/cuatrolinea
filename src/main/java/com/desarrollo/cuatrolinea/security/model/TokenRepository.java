@@ -1,9 +1,7 @@
 package com.desarrollo.cuatrolinea.security.model;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.Query;
+import org.springframework.data.repository.CrudRepository;
 
-public interface TokenRepository extends MongoRepository<TokenDocument, String> {
-    @Query("{userId:'?0'}")
-    TokenDocument findItemByUserId(String userId);
+public interface TokenRepository extends CrudRepository<Token, String> {
+    Token findItemByUser(User user);
 }

@@ -1,25 +1,19 @@
 package com.desarrollo.cuatrolinea.provinces;
 
-import com.desarrollo.cuatrolinea.profile.model.ProfileDocument;
-import com.desarrollo.cuatrolinea.profile.model.ProfileRepository;
-import com.desarrollo.cuatrolinea.profile.pojo.Profile;
-import com.desarrollo.cuatrolinea.profile.pojo.ProfileData;
-import com.desarrollo.cuatrolinea.provinces.model.ProvinceDocument;
+import com.desarrollo.cuatrolinea.provinces.model.Province;
 import com.desarrollo.cuatrolinea.provinces.model.ProvinceRepository;
 import com.desarrollo.cuatrolinea.provinces.pojo.NewProvinceData;
-import com.desarrollo.cuatrolinea.provinces.pojo.Province;
+import com.desarrollo.cuatrolinea.provinces.pojo.ProvinceDTO;
 import com.desarrollo.cuatrolinea.security.AuthValidation;
 import com.desarrollo.cuatrolinea.security.model.TokenRepository;
-import com.desarrollo.cuatrolinea.security.model.UserDocument;
 import com.desarrollo.cuatrolinea.security.model.UserRepository;
-import com.desarrollo.cuatrolinea.security.pojo.ChangePasswordData;
-import com.desarrollo.cuatrolinea.security.pojo.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.StreamSupport;
 
 @CrossOrigin
 @RestController
@@ -38,10 +32,11 @@ public class ProvinceModel {
             value = "/list",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public List<Province> list(@RequestHeader(HttpHeaders.AUTHORIZATION) String auth) {
-        AuthValidation.validateAuthUser(userRepository, tokenRepository, auth);
+    public List<ProvinceDTO> list(@RequestHeader(HttpHeaders.AUTHORIZATION) String auth) {
+        AuthValidation.validateAuthUser(tokenRepository, auth);
 
-        return provinceRepository.findAll().stream().map(Province::new).toList();
+        return StreamSupport.stream(provinceRepository.findAll().spliterator(), false)
+                .map(ProvinceDTO::new).toList();
     }
 
     @PostMapping(
@@ -52,8 +47,8 @@ public class ProvinceModel {
             @RequestHeader(HttpHeaders.AUTHORIZATION) String auth,
             @RequestBody NewProvinceData newProvinceData
     ) {
-        AuthValidation.validateAuthUser(userRepository, tokenRepository, auth);
+        AuthValidation.validateAuthUser(tokenRepository, auth);
 
-        provinceRepository.save(new ProvinceDocument(newProvinceData.name));
+        provinceRepository.save(new Province(newProvinceData.name));
     }
 }

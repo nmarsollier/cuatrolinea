@@ -2,7 +2,6 @@ package com.desarrollo.cuatrolinea.profile.pojo;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.springframework.data.annotation.Id;
 
 public class ProfileData {
 

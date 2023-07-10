@@ -1,12 +1,11 @@
 package com.desarrollo.cuatrolinea.game;
 
-import com.desarrollo.cuatrolinea.game.model.GameDocument;
+import com.desarrollo.cuatrolinea.game.model.Game;
 import com.desarrollo.cuatrolinea.game.model.GameRepository;
 import com.desarrollo.cuatrolinea.game.pojo.GameBoard;
 import com.desarrollo.cuatrolinea.security.AuthValidation;
 import com.desarrollo.cuatrolinea.security.model.TokenRepository;
-import com.desarrollo.cuatrolinea.security.model.UserDocument;
-import com.desarrollo.cuatrolinea.security.model.UserRepository;
+import com.desarrollo.cuatrolinea.security.model.User;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +20,7 @@ import org.springframework.web.client.HttpClientErrorException;
 @RestController
 @RequestMapping(value = "/game")
 public class GameModel {
-    @Autowired
-    UserRepository userRepository;
+
 
     @Autowired
     TokenRepository tokenRepository;
@@ -38,14 +36,14 @@ public class GameModel {
     public GameBoard newGame(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String auth
     ) {
-        UserDocument user = AuthValidation.validateAuthUser(userRepository, tokenRepository, auth);
+        User user = AuthValidation.validateAuthUser(tokenRepository, auth);
 
-        GameDocument game = gameRepository.findItemFree(user.name).stream().findFirst().orElse(null);
+        Game game = gameRepository.findItemFree(user.name).stream().findFirst().orElse(null);
         if (game != null) {
-            game.user2 = user.name;
+            game.user2 = user;
         } else {
-            game = new GameDocument();
-            game.user1 = user.name;
+            game = new Game();
+            game.user1 = user;
             game.turn = 1;
         }
 
@@ -63,9 +61,9 @@ public class GameModel {
             @PathVariable("id") String id,
             @RequestHeader(HttpHeaders.AUTHORIZATION) String auth
     ) {
-        AuthValidation.validateAuthUser(userRepository, tokenRepository, auth);
+        AuthValidation.validateAuthUser(tokenRepository, auth);
 
-        GameDocument existingGame = gameRepository.findById(id).orElseThrow();
+        Game existingGame = gameRepository.findById(id).orElseThrow();
         return new GameBoard(existingGame);
     }
 
@@ -79,10 +77,10 @@ public class GameModel {
             @RequestParam("column") int column,
             @RequestHeader(HttpHeaders.AUTHORIZATION) String auth
     ) {
-        UserDocument user = AuthValidation.validateAuthUser(userRepository, tokenRepository, auth);
+        User user = AuthValidation.validateAuthUser(tokenRepository, auth);
 
-        GameDocument game = gameRepository.findById(id).orElseThrow();
-        if (!game.user2.equals(user.name) && !game.user1.equals(user.name)) throw new
+        Game game = gameRepository.findById(id).orElseThrow();
+        if (!game.user2.name.equals(user.name) && !game.user1.name.equals(user.name)) throw new
                 HttpClientErrorException(HttpStatusCode.valueOf(404));
 
         game.play(user.name, column);

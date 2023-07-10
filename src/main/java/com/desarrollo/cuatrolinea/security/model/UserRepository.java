@@ -1,10 +1,8 @@
 package com.desarrollo.cuatrolinea.security.model;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.Query;
+import org.springframework.data.repository.CrudRepository;
 
-public interface UserRepository extends MongoRepository<UserDocument, String> {
+public interface UserRepository extends CrudRepository<User, String> {
 
-    @Query("{name:'?0'}")
-    UserDocument findItemByName(String name);
+    User findItemByName(String name);
 }

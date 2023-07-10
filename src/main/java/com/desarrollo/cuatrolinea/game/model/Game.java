@@ -1,21 +1,24 @@
 package com.desarrollo.cuatrolinea.game.model;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import com.desarrollo.cuatrolinea.security.model.User;
+import jakarta.persistence.*;
 
 import java.security.InvalidParameterException;
 
-@Document("games")
-public class GameDocument {
+@Entity
+public class Game {
     static int MAX_COLS = 5;
     static int MAX_ROWS = 5;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     public String id;
 
-    public String user1;
+    @ManyToOne
+    public User user1;
 
-    public String user2;
+    @ManyToOne
+    public User user2;
 
     public int[][] board = new int[MAX_ROWS][MAX_COLS];
 
@@ -23,18 +26,18 @@ public class GameDocument {
 
     public String winner;
 
-    public boolean match = false;
+    public boolean matched = false;
 
     public void play(String name, int column) {
         if (turn == 0) throw new InvalidParameterException("We cant play");
         if (winner != null) throw new InvalidParameterException("We cant play");
-        if (turn == 1 && !name.equals(user1)) throw new InvalidParameterException("Not your turn");
-        if (turn == 2 && !name.equals(user2)) throw new InvalidParameterException("Not your turn");
+        if (turn == 1 && !name.equals(user1.name)) throw new InvalidParameterException("Not your turn");
+        if (turn == 2 && !name.equals(user2.name)) throw new InvalidParameterException("Not your turn");
 
         if (column >= MAX_COLS) throw new InvalidParameterException("Invalid column");
 
         int user = 1;
-        if (name.equals(user2)) user = 2;
+        if (name.equals(user2.name)) user = 2;
 
         for (int i = 0; i < MAX_ROWS; i++) {
             if (board[i][column] != 0) {
@@ -52,7 +55,7 @@ public class GameDocument {
 
         checkWinner(name);
 
-        if (name.equals(user1)) {
+        if (name.equals(user1.name)) {
             turn = 2;
         } else {
             turn = 1;
@@ -67,8 +70,8 @@ public class GameDocument {
                 }
             }
         }
-        if(checkNoWins()) {
-            this.match = true;
+        if (checkNoWins()) {
+            this.matched = true;
         }
     }
 
@@ -117,11 +120,15 @@ public class GameDocument {
     }
 
     private boolean checkNoWins() {
-        for(int i = 0; i<MAX_ROWS; i++) {
-            for(int j=0; j<MAX_COLS; j++) {
-                if(board[i][j] == 0) return false;
+        for (int i = 0; i < MAX_ROWS; i++) {
+            for (int j = 0; j < MAX_COLS; j++) {
+                if (board[i][j] == 0) return false;
             }
         }
         return true;
+    }
+
+    public Game() {
+
     }
 }

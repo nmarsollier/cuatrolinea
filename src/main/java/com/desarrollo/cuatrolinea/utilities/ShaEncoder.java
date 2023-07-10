@@ -3,7 +3,6 @@ package com.desarrollo.cuatrolinea.utilities;
 import com.google.common.hash.Hashing;
 
 import java.nio.charset.StandardCharsets;
-import java.security.NoSuchAlgorithmException;
 
 public class ShaEncoder {
     public static String encode(String originalString) {
