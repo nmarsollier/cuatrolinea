@@ -7,6 +7,9 @@ import com.desarrollo.cuatrolinea.security.pojo.TokenDTO;
 import com.desarrollo.cuatrolinea.security.pojo.UserDTO;
 import com.desarrollo.cuatrolinea.utilities.ShaEncoder;
 import jakarta.transaction.Transactional;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.headers.Header;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
@@ -29,6 +32,8 @@ public class AuthModel {
     @Autowired
     TokenRepository tokenRepository;
 
+    @Tag(name = "User",
+            description = "Register a new user in the paltform")
     @PostMapping(
             value = "/register",
             consumes = {MediaType.APPLICATION_JSON_VALUE},
@@ -54,6 +59,8 @@ public class AuthModel {
         return result;
     }
 
+    @Tag(name = "User",
+            description = "Get info about current user")
     @GetMapping(
             value = "/current",
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -64,6 +71,7 @@ public class AuthModel {
         return new UserDTO(user);
     }
 
+    @Tag(name = "User", description = "Login in the app")
     public @PostMapping(
             value = "/login",
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -81,6 +89,7 @@ public class AuthModel {
         return result;
     }
 
+    @Tag(name = "User", description = "Change current user password")
     public @PostMapping(
             value = "/changePassword",
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -103,6 +112,7 @@ public class AuthModel {
         userRepository.save(user);
     }
 
+    @Tag(name = "User", description = "Logout current user")
     public @GetMapping(
             value = "/logout",
             produces = MediaType.APPLICATION_JSON_VALUE

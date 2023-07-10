@@ -10,6 +10,7 @@ import com.desarrollo.cuatrolinea.security.AuthValidation;
 import com.desarrollo.cuatrolinea.security.model.TokenRepository;
 import com.desarrollo.cuatrolinea.security.model.User;
 import com.desarrollo.cuatrolinea.security.model.UserRepository;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -31,9 +32,17 @@ public class ProfileModel {
     @Autowired
     ProvinceRepository provinceRepository;
 
-    @PostMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ProfileDTO update(@RequestHeader(HttpHeaders.AUTHORIZATION) String auth, @RequestBody ProfileData profileData) {
-        User user = AuthValidation.validateAuthUser(tokenRepository, auth);
+
+    @Tag(name = "Profile", description = "Update current user profile")
+    @PostMapping(
+            value = "/update",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public Profile update(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String auth,
+            @RequestBody ProfileData profileData
+    ) {
+        UserDocument user = AuthValidation.validateAuthUser(userRepository, tokenRepository, auth);
 
         Province province = null;
         if (profileData.provinceId != null) {
@@ -57,10 +66,17 @@ public class ProfileModel {
         return new ProfileDTO(user, profile);
     }
 
-    @GetMapping(value = "/current", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ProfileDTO currentUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String auth) {
-        User user = AuthValidation.validateAuthUser(tokenRepository, auth);
-        Profile profile = profileRepository.findItemByUser(user);
-        return new ProfileDTO(user, profile);
+    @Tag(name = "Profile", description = "Get current user profile")
+    @GetMapping(
+            value = "/current",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public Profile currentUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String auth) {
+        UserDocument user = AuthValidation.validateAuthUser(userRepository, tokenRepository, auth);
+        ProfileDocument profile = profileRepository.findItemByUserId(user.id);
+        if (profile == null) {
+            profile = new ProfileDocument(user.id, user.name, null, null, null, null, null);
+        }
+        return new Profile(user, profile);
     }
 }
