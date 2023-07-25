@@ -12,15 +12,29 @@ Crear el esquema 4_linea
 
 ## Configuracion
 
-Instalar InlettliJ Community
+Instalar InlettliJ Community https://www.jetbrains.com/idea/download/
 
 Abrir el directorio base de este proyecto
 
-Ir a la configuracion del Proyecto y agregar un JDK , puede ser Azul Zulo 20.
+Ir a la configuracion del Proyecto en el menu de Archivo y agregar un JDK , puede ser Azul Zulo 20.
+Esto va a instalar el JDK en la computadora
 
+Instalar maven desde https://maven.apache.org/download.cgi , el proyecto fue realizado con maven 3.6.3. Configurar el PATH
+
+Abrir el archivo application.properties actualizar usuario y contraseña de MySQL
+
+## Ejecucion
+
+Dos opciones: 
+1
 Ejecutar la clase principal CuatrolineaApplication.
 
 El servidor queda funcionando en http://localhost:3000/
+
+2
+Ejecutar el comando 
+
+mvn org.springframework.boot:spring-boot-maven-plugin:run
 
 ## Documentacion de Api
 
